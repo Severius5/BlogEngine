@@ -1,0 +1,51 @@
+﻿@model EditPostViewModel
+@{
+    Layout = "_AdminLayout";
+}
+
+<form asp-action="EditPost" method="post">
+    <div class="text-center">
+        <div class="btn-group mb-2" role="group" aria-label="Actions">
+            <button type="submit" class="btn btn-outline-success">Save</button>
+            <a asp-action="Posts" class="btn btn-outline-danger">Cancel</a>
+        </div>
+    </div>
+
+    <div class="input-group mb-1">
+        <div class="input-group-prepend">
+            <span class="input-group-text d-inline-block">Title</span>
+        </div>
+        @Html.TextBoxFor(x => x.Title, new { @class = "form-control" })
+    </div>
+    <div class="input-group mb-2">
+        <div class="input-group-prepend">
+            <span class="input-group-text">Description</span>
+        </div>
+        @Html.TextAreaFor(x => x.Description, new { @class = "form-control" })
+    </div>
+
+    @Html.TextAreaFor(x => x.Content)
+</form>
+
+@section Styles{
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    <style>
+        .input-group > .input-group-prepend {
+            flex: 0 0 10%;
+        }
+
+        .input-group .input-group-text {
+            width: 100%;
+        }
+    </style>
+}
+@section Scripts{
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+    <script>
+        var easyMDE = new EasyMDE({
+            element: document.getElementById('Content'),
+            showIcons: ["code", "table"],
+            spellChecker: false
+        });
+    </script>
+}

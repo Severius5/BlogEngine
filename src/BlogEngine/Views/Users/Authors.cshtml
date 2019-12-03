@@ -1,0 +1,112 @@
+﻿@using Microsoft.AspNetCore.Http.Extensions
+@model UsersListViewModel
+@{
+    Layout = "_AdminLayout";
+    var currentUserId = User.GetId();
+}
+
+<form asp-action="Users" method="get">
+    <div class="mb-4 container">
+        <div class="custom-control-inline">
+            <input type="search" class="form-control" id="SearchText" asp-for="@Model.Filter.Search" placeholder="Search" />
+        </div>
+        <div class="custom-control-inline float-md-right">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </div>
+</form>
+
+@if (!Model.Users.Any())
+{
+    <div class="text-center">No Results</div>
+}
+else
+{
+    <div class="list-group list-group-flush">
+        @foreach (var user in Model.Users)
+        {
+            <div class="list-group-item d-flex">
+                <div class="p-2 flex-grow-1">
+                    @if (user.IsAdmin)
+                    {
+                        <span class="badge badge-danger">Admin</span>
+                    }
+                    @if (user.IsBlocked)
+                    {
+                        <span class="badge badge-dark">Blocked</span>
+                    }
+                    @user.Username
+                </div>
+
+                <div class="p-2">
+                    <a asp-action="Author" asp-controller="Home" asp-route-userId="@user.Id" asp-route-slug="@user.Slug">
+                        <span style="color: gray"><i class="far fa-fw fa-eye"></i></span>
+                    </a>
+                </div>
+
+                <div asp-authorize-resource="@(BlogUser)user" asp-requirement="@UserOperationRequirement.Edit" class="p-2">
+                    <a asp-action="EditUser" asp-controller="Users" asp-route-userId="@user.Id">
+                        <span style="color: dodgerblue"><i class="fas fa-fw fa-user-edit"></i></span>
+                    </a>
+                </div>
+
+                @if (currentUserId != user.Id)
+                {
+                    @if (user.IsBlocked)
+                    {
+                        <div asp-authorize-resource="@(BlogUser)user" asp-requirement="@UserOperationRequirement.Unblock" class="p-2">
+                            <form id="unblockUserForm-@user.Id" asp-action="UnblockUser" asp-controller="Users" asp-route-userId="@user.Id" asp-route-returnUrl="@Context.Request.GetEncodedPathAndQuery()">
+                                <a href="#" onclick="submitForm('unblockUserForm-@user.Id')">
+                                    <span style="color: black"><i class="fas fa-lock fa-fw"></i></span>
+                                </a>
+                            </form>
+                        </div>
+                    }
+                    else
+                    {
+                        @if (user.IsAdmin)
+                        {
+                            <div asp-authorize-resource="@(BlogUser)user" asp-requirement="@UserOperationRequirement.ChangeAdminStatus" class="p-2">
+                                <form id="removeAdminForm-@user.Id" asp-action="ChangeAdminStatus" asp-controller="Users" asp-route-userId="@user.Id" asp-route-returnUrl="@Context.Request.GetEncodedPathAndQuery()">
+                                    <input name="Admin" value="false" hidden />
+                                    <a href="#" onclick="submitForm('removeAdminForm-@user.Id')">
+                                        <span style="color: orange"><i class="fas fa-fw fa-star"></i></span>
+                                    </a>
+                                </form>
+                            </div>
+                        }
+                        else
+                        {
+                            <div asp-authorize-resource="@(BlogUser)user" asp-requirement="@UserOperationRequirement.ChangeAdminStatus" class="p-2">
+                                <form id="addAdminForm-@user.Id" asp-action="ChangeAdminStatus" asp-controller="Users" asp-route-userId="@user.Id" asp-route-returnUrl="@Context.Request.GetEncodedPathAndQuery()">
+                                    <input name="Admin" value="true" hidden />
+                                    <a href="#" onclick="submitForm('addAdminForm-@user.Id')">
+                                        <span style="color: orange"><i class="far fa-fw fa-star"></i></span>
+                                    </a>
+                                </form>
+                            </div>
+                        }
+
+                        <div asp-authorize-resource="@(BlogUser)user" asp-requirement="@UserOperationRequirement.Block" class="p-2">
+                            <form id="blockUserForm-@user.Id" asp-action="BlockUser" asp-controller="Users" asp-route-userId="@user.Id" asp-route-returnUrl="@Context.Request.GetEncodedPathAndQuery()">
+                                <a href="#" onclick="submitForm('blockUserForm-@user.Id')">
+                                    <span style="color: black"><i class="fas fa-unlock fa-fw"></i></span>
+                                </a>
+                            </form>
+                        </div>
+                    }
+                }
+            </div>
+        }
+    </div>
+    <div>
+        @Html.PagedListPager(Model.Users, page => {
+            Model.Filter.Page = page;
+            return Url.Action("Authors", Model.Filter);
+        },
+        new PagedListRenderOptions {
+            LiElementClasses = new string[] { "page-item" },
+            PageClasses = new string[] { "page-link" }
+        })
+    </div>
+}

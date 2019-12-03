@@ -1,0 +1,128 @@
+﻿@using Microsoft.AspNetCore.Http.Extensions
+@model PostsListViewModel
+@{
+    Layout = "_AdminLayout";
+}
+
+<form asp-action="Posts" method="get">
+    <div class="mb-4 container">
+        <div class="custom-control custom-checkbox custom-control-inline">
+            <input type="checkbox" class="custom-control-input" id="DraftsCheckBox" asp-for="@Model.Filter.Drafted">
+            <label class="custom-control-label" for="DraftsCheckBox">Drafts</label>
+        </div>
+        <div class="custom-control custom-checkbox custom-control-inline">
+            <input type="checkbox" class="custom-control-input" id="PublishedCheckBox" asp-for="@Model.Filter.Published">
+            <label class="custom-control-label" for="PublishedCheckBox">Published</label>
+        </div>
+        @if (User.IsAdmin())
+        {
+            <div class="custom-control custom-checkbox custom-control-inline">
+                <input type="checkbox" class="custom-control-input" id="RemovedCheckBox" asp-for="@Model.Filter.Removed">
+                <label class="custom-control-label" for="RemovedCheckBox">Removed</label>
+            </div>
+        }
+        <div class="custom-control custom-checkbox custom-control-inline">
+            <input type="checkbox" class="custom-control-input" id="OwnCheckBox" asp-for="@Model.Filter.Own">
+            <label class="custom-control-label" for="OwnCheckBox">Own</label>
+        </div>
+        <div class="custom-control-inline">
+            <input type="search" class="form-control" id="SearchText" asp-for="@Model.Filter.Search" placeholder="Search" />
+        </div>
+        <div class="custom-control-inline float-md-right">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </div>
+</form>
+
+@if (!Model.Posts.Any())
+{
+    <div class="text-center">No Results</div>
+}
+else
+{
+    <div class="list-group list-group-flush">
+        @foreach (var post in Model.Posts)
+        {
+            <div class="list-group-item d-flex post-status"
+                 condition-class-published="@(post.Status == PostStatus.Published)"
+                 condition-class-drafted="@(post.Status == PostStatus.Draft)">
+
+                <div class="p-2 flex-grow-1">@post.Title</div>
+
+                <div class="p-2">
+                    <a asp-action="Post" asp-controller="Home" asp-route-postId="@post.Id" asp-route-slug="@post.Slug">
+                        <span style="color: gray"><i class="far fa-fw fa-eye"></i></span>
+                    </a>
+                </div>
+
+                @if (post.Status == PostStatus.Draft)
+                {
+                    <div asp-authorize-resource="@(BlogPost)post" asp-requirement="@PostOperationRequirement.Publish" class="p-2">
+                        <form id="publishPostForm-@post.Id" asp-action="PublishPost" asp-controller="Posts" asp-route-postId="@post.Id" asp-route-returnUrl="@Context.Request.GetEncodedPathAndQuery()">
+                            <a href="#" onclick="submitForm('publishPostForm-@post.Id')">
+                                <span style="color: orange"><i class="fas fa-circle fa-fw"></i></span>
+                            </a>
+                        </form>
+                    </div>
+                }
+                else if (post.Status == PostStatus.Published)
+                {
+                    <div asp-authorize-resource="@(BlogPost)post" asp-requirement="@PostOperationRequirement.Unpublish" class="p-2">
+                        <form id="unpublishPostForm-@post.Id" asp-action="UnpublishPost" asp-controller="Posts" asp-route-postId="@post.Id" asp-route-returnUrl="@Context.Request.GetEncodedPathAndQuery()">
+                            <a href="#" onclick="submitForm('unpublishPostForm-@post.Id')">
+                                <span style="color: green"><i class="fas fa-circle fa-fw"></i></span>
+                            </a>
+                        </form>
+                    </div>
+                }
+                else
+                {
+                    <div class="p-2">
+                        <form id="restorePostForm-@post.Id" asp-action="RestorePost" asp-controller="Posts" asp-route-postId="@post.Id" asp-route-returnUrl="@Context.Request.GetEncodedPathAndQuery()">
+                            <a href="#" onclick="submitForm('restorePostForm-@post.Id')">
+                                <span style="color: black"><i class="fas fa-circle fa-fw"></i></span>
+                            </a>
+                        </form>
+                    </div>
+                }
+
+                <div asp-authorize-resource="@(BlogPost)post" asp-requirement="@PostOperationRequirement.Edit" class="p-2">
+                    <a asp-action="EditPost" asp-controller="Posts" asp-route-postId="@post.Id">
+                        <span style="color: dodgerblue"><i class="fas fa-edit fa-fw"></i></span>
+                    </a>
+                </div>
+
+                @if (post.Status == PostStatus.Removed)
+                {
+                    <div class="p-2">
+                        <form id="deletePostForm-@post.Id" asp-action="DeletePost" asp-controller="Posts" asp-route-postId="@post.Id" asp-route-returnUrl="@Context.Request.GetEncodedPathAndQuery()">
+                            <a href="#" onclick="submitForm('deletePostForm-@post.Id')">
+                                <span style="color: red"><i class="fas fa-trash fa-fw"></i></span>
+                            </a>
+                        </form>
+                    </div>
+                }
+                else
+                {
+                    <div asp-authorize-resource="@(BlogPost)post" asp-requirement="@PostOperationRequirement.Remove" class="p-2">
+                        <form id="removePostForm-@post.Id" asp-action="RemovePost" asp-controller="Posts" asp-route-postId="@post.Id" asp-route-returnUrl="@Context.Request.GetEncodedPathAndQuery()">
+                            <a href="#" onclick="submitForm('removePostForm-@post.Id')">
+                                <span style="color: red"><i class="fas fa-trash fa-fw"></i></span>
+                            </a>
+                        </form>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    <div>
+        @Html.PagedListPager(Model.Posts, page => {
+            Model.Filter.Page = page;
+            return Url.Action("Posts", Model.Filter);
+        },
+        new PagedListRenderOptions {
+            LiElementClasses = new string[] { "page-item" },
+            PageClasses = new string[] { "page-link" }
+        })
+    </div>
+}

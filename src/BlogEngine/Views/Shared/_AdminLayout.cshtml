@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/css/admin.min.css" asp-append-version="true" />
+
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+
+    <div class="page-wrapper chiller-theme toggled">
+        <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
+            <i class="fas fa-bars"></i>
+        </a>
+        <nav id="sidebar" class="sidebar-wrapper">
+            <div class="sidebar-content">
+
+                <div class="sidebar-brand">
+                    <a asp-action="Index" asp-controller="Home">Blog Name</a>
+                    <div id="close-sidebar">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+
+                <div class="sidebar-header">
+                    <div class="user-pic">
+                        <img class="img-responsive img-rounded" src="https://raw.githubusercontent.com/azouaoui-med/pro-sidebar-template/gh-pages/src/img/user.jpg"
+                             alt="User picture">
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">
+                            @User.GetUsername()
+                        </span>
+                        @{ var userRole = User.IsAdmin() ? "Administrator" : "Author"; }
+                        <span class="user-role">@userRole</span>
+                    </div>
+                </div>
+
+                <div class="sidebar-menu">
+                    <ul>
+                        <li class="sidebar-dropdown">
+                            <a href="#">
+                                <i class="far fa-file-alt"></i>
+                                <span>Posts</span>
+                            </a>
+                            <div class="sidebar-submenu">
+                                <ul>
+                                    <li>
+                                        <a is-active-route asp-action="Posts" asp-controller="Posts">All Posts</a>
+                                    </li>
+                                    <li>
+                                        <a is-active-route asp-action="NewPost" asp-controller="Posts">New Post</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="sidebar-dropdown">
+                            <a href="#">
+                                <i class="fas fa-users"></i>
+                                <span>Authors</span>
+                            </a>
+                            <div class="sidebar-submenu">
+                                <ul>
+                                    <li>
+                                        <a is-active-route asp-action="Authors" asp-controller="Users">All Authors</a>
+                                    </li>
+                                    @if (User.IsAdmin())
+                                    {
+                                        <li>
+                                            <a is-active-route asp-action="NewAuthor" asp-controller="Users">New Author</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="sidebar-dropdown">
+                            <a href="#">
+                                <i class="fas fa-user"></i>
+                                <span>Profile</span>
+                            </a>
+                            <div class="sidebar-submenu">
+                                <ul>
+                                    <li>
+                                        <a is-active-route asp-action="EditUser" asp-controller="Users" asp-route-userId="@User.GetId()" >Edit Profile</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Change Password</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Change Email</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="sidebar-dropdown">
+                            <a href="#">
+                                <i class="fas fa-cog"></i>
+                                <span>Settings</span>
+                            </a>
+                            <div class="sidebar-submenu">
+                                <ul>
+                                    <li>
+                                        <a href="#">Blog</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <!-- sidebar-menu  -->
+
+            </div>
+            <!-- sidebar-content  -->
+
+            <div class="sidebar-footer">
+                <a asp-action="Index" asp-controller="Home">
+                    <i class="fas fa-globe"></i>
+                </a>
+                <a asp-action="Logout" asp-controller="Account">
+                    <i class="fas fa-power-off"></i>
+                </a>
+            </div>
+
+        </nav>
+        <!-- sidebar-wrapper  -->
+
+        <main role="main" class="page-content">
+            <div class="container-fluid">
+                @RenderBody()
+            </div>
+        </main>
+
+    </div>
+    <!-- page-wrapper -->
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o" crossorigin="anonymous"></script>
+    <script src="~/js/admin.min.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

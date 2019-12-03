@@ -1,0 +1,22 @@
+﻿.pagination {
+    margin-bottom: 0;
+    margin-top: 17px;
+    justify-content: center;
+}
+
+.post-status {
+    border-left-style: solid !important;
+    border-left-width: 5px !important;
+}
+
+    .post-status.published {
+        border-left-color: green;
+    }
+
+    .post-status.drafted {
+        border-left-color: orange;
+    }
+
+.user-edit-container {
+    max-width: 500px;
+}

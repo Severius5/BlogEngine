@@ -1,0 +1,24 @@
+﻿[
+    {
+        "outputFileName": "wwwroot/css/site.min.css",
+        "inputFiles": [
+            "SiteContent/css/*.css"
+        ]
+    },
+    {
+        "outputFileName": "wwwroot/css/admin.min.css",
+        "inputFiles": [
+            "SiteContent/css/admin/*.css"
+        ]
+    },
+    {
+        "outputFileName": "wwwroot/js/admin.min.js",
+        "inputFiles": [
+            "SiteContent/js/admin/*.js"
+        ],
+        "minify": {
+            "enabled": true,
+            "renameLocals": true
+        }
+    }
+]

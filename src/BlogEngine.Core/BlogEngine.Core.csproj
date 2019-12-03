@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlogEngine.DTO\BlogEngine.DTO.csproj" />
+    <ProjectReference Include="..\BlogEngine.Notifications\BlogEngine.Notifications.csproj" />
+    <ProjectReference Include="..\BlogEngine.Storage\BlogEngine.Storage.csproj" />
+  </ItemGroup>
+
+</Project>

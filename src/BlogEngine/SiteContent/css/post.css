@@ -1,0 +1,17 @@
+﻿.post-meta {
+    margin: 2px 3px 10px;
+}
+
+    .post-meta .calendar {
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .post-meta .category {
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .post-meta .author {
+        display: inline-block;
+    }

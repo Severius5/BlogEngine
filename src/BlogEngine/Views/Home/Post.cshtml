@@ -1,0 +1,38 @@
+﻿@model PostViewModel
+
+<article>
+    <h1 class="text-center">@Model.Title</h1>
+
+    @if (Model.Status == PostStatus.Draft)
+    {
+        <div class="alert alert-warning text-center" role="alert">
+            DRAFT
+        </div>
+    }
+    else if (Model.Status == PostStatus.Removed)
+    {
+        <div class="alert alert-danger text-center" role="alert">
+            REMOVED
+        </div>
+    }
+
+    <div class="post-meta">
+        <div class="calendar">
+            <i class="far fa-calendar"></i>
+            @Model.PublicationDate?.ToLongDateString()
+        </div>
+        <div class="category">
+            <i class="far fa-folder"></i>
+            Category
+        </div>
+        <div class="author">
+            <i class="far fa-user"></i>
+            <a asp-controller="Account" asp-action="Profile" asp-route-slug="@Model.Author.Slug" asp-route-id="@Model.Author.Id">@Model.Author.Username</a>
+        </div>
+    </div>
+
+    <div>
+        <markdown>@Model.Content</markdown>
+    </div>
+
+</article>
